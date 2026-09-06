@@ -1,0 +1,26 @@
+[
+  {
+    "event_id": "f4182e44-23bb-4a50-ae50-50df899b10dc",
+    "event_type": "seam.sla_breached",
+    "timestamp": "2026-09-06T22:17:50.809123+00:00",
+    "owner": "US Solution Architect",
+    "brief_id": "BRIEF-001",
+    "metadata": {
+      "health": {
+        "health": "red",
+        "elapsed_business_days": 2.04,
+        "sla_business_days": 2,
+        "sla_progress": 1.02,
+        "breached": true
+      },
+      "draft": {
+        "objective": "Build KYC document review POC",
+        "template_ids_used": [
+          "UK-001",
+          "IN-001"
+        ]
+      },
+      "triggered_at": "2026-09-06T22:17:50.809123+00:00"
+    }
+  }
+]
