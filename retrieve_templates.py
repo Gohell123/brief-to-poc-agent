@@ -1,3 +1,4 @@
+from feedback import feedback_score
 import json
 from pathlib import Path
 
@@ -60,25 +61,37 @@ def retrieve_templates(brief: dict, top_k: int = TOP_K) -> list[dict]:
     )
     scores = cosine_similarity(query_embedding, matrix)
 
-    ranked_indices = np.argsort(scores)[::-1][:top_k]
     results = []
-    for index in ranked_indices:
+
+    for index in range(len(template_ids)):
         template_id = template_ids[index]
-        template = templates[template_id]
+        semantic_score = float(scores[index])
+        feedback = feedback_score(template_id)
+
         results.append(
             {
                 "template_id": template_id,
-                "name": template["name"],
-                "similarity": float(scores[index]),
-                "segment": template["segment"],
-                "problem_solved": template["problem_solved"],
+                "name": templates[template_id]["name"],
+                "similarity": semantic_score,
+                "feedback_score": feedback,
+                "final_score": semantic_score + feedback,
+                "segment": templates[template_id]["segment"],
+                "problem_solved": templates[template_id]["problem_solved"],
             }
         )
+
+    results.sort(
+        key=lambda x: x["final_score"],
+        reverse=True,
+    )
+
+    results = results[:top_k]
+
     return results
 
 
 def test_brief_001() -> None:
-    brief = load_brief("BRIEF-003")
+    brief = load_brief("BRIEF-001")
     results = retrieve_templates(brief, top_k=3)
 
     assert len(results) == 3

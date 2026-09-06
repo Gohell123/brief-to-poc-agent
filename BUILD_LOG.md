@@ -60,3 +60,29 @@ Tested all 3 synthetic briefs. The correct domain template ranked #1 for each:
 
 **Discarded approach:** Vector database at this stage. With only 8 templates, direct cosine similarity is simpler and faster for the POC.
 
+## 3. R2 Generation
+
+**Requirement:** From a Brief and the top 3 retrieved templates, generate match explanations, an editable POC plan, and an editable Delivery handoff as structured JSON. Ground output only in the Brief and templates.
+
+**Decision:** Local Ollama `qwen3:1.7b` via `http://127.0.0.1:11434`. Prompt lives in `prompts/r2_generation.txt`. Script is `generate_r2.py`.
+
+**Why:** The model is already on the machine, needs no cloud API key, and avoids Amazon Bedrock invoke (Cohere Embed was previously blocked on this AWS account). 1.7b is fast enough for this small JSON task. Instructions stay in a separate file so the prompt can be edited without changing code.
+
+**AI Tool:** Cursor Agent
+
+**Prompt:**
+Implement R2 generation.
+
+- Take a Brief and the top 3 retrieved templates
+- Use a suitable LLM to explain matches, draft a POC plan, and draft a Delivery handoff
+- Base output only on the Brief and retrieved templates
+- Include template IDs used and proposed changes
+- Return structured JSON; keep prompt/instructions in a separate file
+- Choose the LLM for speed and simplicity, and document the choice
+- Test with BRIEF-001
+- No UI yet
+
+**Validation:** `generate_r2.py` with BRIEF-001 writes `data/r2_BRIEF-001.json`.
+
+**Discarded approach:** Amazon Bedrock LLMs, because embedding invoke was already blocked on this account and local Ollama was available. Larger cloud models were skipped for speed and setup cost in the 8-hour POC.
+
