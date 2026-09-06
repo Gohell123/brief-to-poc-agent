@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 import streamlit as st
-
+from decision import record_decision
 from generate_r2 import generate_r2
 from sla import seam_health
 
@@ -11,6 +11,84 @@ from sla import seam_health
 ROOT = Path(__file__).resolve().parent
 BRIEFS_PATH = ROOT / "data" / "briefs.json"
 EVENTS_PATH = ROOT / "data" / "os_events.json"
+
+
+# ---------------------------------------------------------
+# Temporary deterministic R2 result for R3/UI testing
+# ---------------------------------------------------------
+
+MOCK_R2_RESULT = {
+    "template_ids_used": ["UK-001", "IN-001", "IN-003"],
+    "match_explanations": [
+        {
+            "template_id": "UK-001",
+            "explanation": (
+                "Strong match for the customer's KYC document review "
+                "problem and reusable document-processing workflow."
+            ),
+        },
+        {
+            "template_id": "IN-001",
+            "explanation": (
+                "Strong supporting match for KYC workflow implementation "
+                "and document review."
+            ),
+        },
+        {
+            "template_id": "IN-003",
+            "explanation": (
+                "Secondary match providing a reusable customer-facing "
+                "workflow pattern."
+            ),
+        },
+    ],
+    "poc_plan": {
+        "title": "KYC Document Review POC",
+        "objective": "Build a POC to improve KYC document review.",
+        "scope_in": [
+            "Document review workflow",
+            "KYC document processing",
+        ],
+        "scope_out": [
+            "Production deployment",
+        ],
+        "week_by_week_plan": [
+            "Week 1: Configure document review workflow",
+            "Week 2: Test against agreed success criteria",
+        ],
+        "systems": [
+            "Core Banking System",
+            "Document Management System",
+        ],
+        "success_criteria": [
+            "Reduce manual review time by 30%",
+            "Achieve 95% document classification accuracy",
+        ],
+        "timeline": "4 weeks",
+        "template_ids_used": ["UK-001", "IN-001", "IN-003"],
+        "proposed_changes": [],
+    },
+    "delivery_handoff": {
+        "title": "KYC POC Delivery Handoff",
+        "summary": (
+            "Use the retrieved KYC templates as the starting point "
+            "for the POC."
+        ),
+        "recommended_template_id": "UK-001",
+        "what_to_reuse": [
+            "KYC document review workflow",
+            "Document classification approach",
+        ],
+        "adaptations_required": [],
+        "integrations": [
+            "Core Banking System",
+            "Document Management System",
+        ],
+        "notes_for_delivery": [
+            "Review and confirm the generated draft before delivery.",
+        ],
+    },
+}
 
 
 st.set_page_config(
@@ -216,16 +294,69 @@ if st.button(
     "Generate POC Plan",
     type="primary",
 ):
+    # Temporary deterministic draft for interactive R3 testing.
+    # The real R2 generation remains implemented in generate_r2.py.
+    st.session_state.r2_result = MOCK_R2_RESULT
 
-    with st.spinner("Retrieving templates and generating POC plan..."):
+    st.success("POC plan generated.")
 
-        try:
-            st.session_state.r2_result = generate_r2(
-                selected_brief["brief_id"]
+
+# ---------------------------------------------------------
+# Human Decision
+# ---------------------------------------------------------
+
+if st.session_state.r2_result:
+
+    result = st.session_state.r2_result
+
+    st.divider()
+    st.subheader("Solution Architect Decision")
+
+    st.caption(
+        "The AI creates the draft. The US Solution Architect makes the final decision."
+    )
+
+    template_ids = result.get(
+        "template_ids_used",
+        [],
+    )
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        if st.button(
+            "Accept",
+            type="primary",
+            use_container_width=True,
+        ):
+            event = record_decision(
+                brief_id=selected_brief["brief_id"],
+                decision="accepted",
+                template_ids=template_ids,
             )
 
-        except Exception as exc:
-            st.error(f"Generation failed: {exc}")
+            st.success(
+                "POC plan accepted. Decision recorded as an OS event."
+            )
+
+            st.json(event)
+
+    with col2:
+        if st.button(
+            "Reject",
+            use_container_width=True,
+        ):
+            event = record_decision(
+                brief_id=selected_brief["brief_id"],
+                decision="rejected",
+                template_ids=template_ids,
+            )
+
+            st.warning(
+                "POC plan rejected. Decision recorded as an OS event."
+            )
+
+            st.json(event)
 
 
 # ---------------------------------------------------------
