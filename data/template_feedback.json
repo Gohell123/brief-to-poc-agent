@@ -1,0 +1,10 @@
+{
+  "UK-001": {
+    "accepted": 2,
+    "rejected": 0
+  },
+  "UK-003": {
+    "accepted": 0,
+    "rejected": 1
+  }
+}

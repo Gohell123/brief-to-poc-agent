@@ -1,0 +1,94 @@
+{
+  "brief_id": "BRIEF-001",
+  "template_ids_used": [
+    "UK-001",
+    "IN-001",
+    "IN-003"
+  ],
+  "match_explanations": [
+    {
+      "template_id": "UK-001",
+      "why_it_matches": "The template directly matches the business problem of reducing manual effort in reviewing KYC documents and identifying incomplete cases. The capabilities and integrations align with the systems and success criteria in the Brief. The match is direct.",
+      "proposed_changes": [
+        "Region: The Brief is in the US, while the template is for the UK.",
+        "Regulator: The Brief specifies OCC, while the template is for FCA."
+      ]
+    },
+    {
+      "template_id": "IN-001",
+      "why_it_matches": "The template partially matches the business problem of reducing manual effort in reviewing KYC documents and identifying incomplete cases. The capabilities and integrations align with the systems and success criteria in the Brief. The match is partial.",
+      "proposed_changes": [
+        "Region: The Brief is in the US, while the template is for India.",
+        "Regulator: The Brief specifies OCC, while the template is for RBI."
+      ]
+    },
+    {
+      "template_id": "IN-003",
+      "why_it_matches": "The template does not directly match the business problem of reducing manual effort in reviewing KYC documents. It is focused on customer service rather than KYC review. The match is partial.",
+      "proposed_changes": [
+        "Region: The Brief is in the US, while the template is for India.",
+        "Regulator: The Brief specifies OCC, while the template is for RBI.",
+        "Problem: The template is focused on customer service, while the Brief is focused on KYC review."
+      ]
+    }
+  ],
+  "poc_plan": {
+    "title": "KYC Document Review Automation",
+    "objective": "The bank wants to reduce the manual effort involved in reviewing customer onboarding documents and identifying incomplete KYC cases.",
+    "in_scope": [
+      "Automate first-level review of customer KYC documents",
+      "Identify missing or inconsistent customer information",
+      "Provide explainable recommendations for human reviewers"
+    ],
+    "out_of_scope": [],
+    "approach": [
+      "Reuse the capabilities and integrations from the UK-001 template to automate KYC document review and flag exceptions.",
+      "Adapt the IN-001 template to support document classification and field validation for KYC review.",
+      "Ensure the solution aligns with the US region and OCC regulator."
+    ],
+    "systems": [
+      "Customer CRM",
+      "KYC Case Management",
+      "Document Management System"
+    ],
+    "success_criteria": [
+      "Reduce manual first-level KYC review effort",
+      "Identify missing or inconsistent customer information",
+      "Provide explainable recommendations for human reviewers"
+    ],
+    "timeline": "4 weeks",
+    "template_ids_used": [
+      "UK-001",
+      "IN-001",
+      "IN-003"
+    ],
+    "proposed_changes": [
+      "Region: The Brief is in the US, while the templates are for the UK and India.",
+      "Regulator: The Brief specifies OCC, while the templates are for FCA and RBI."
+    ]
+  },
+  "delivery_handoff": {
+    "title": "KYC Document Review Automation",
+    "summary": "The solution will automate the first-level review of customer KYC documents, identify missing or inconsistent information, and provide explainable recommendations for human reviewers. It will reuse the capabilities and integrations from the UK-001 and IN-001 templates.",
+    "recommended_template_id": "UK-001",
+    "what_to_reuse": [
+      "Document classification",
+      "Identity information extraction",
+      "Missing document detection",
+      "KYC exception flagging"
+    ],
+    "adaptations_required": [
+      "Region: The Brief is in the US, while the template is for the UK.",
+      "Regulator: The Brief specifies OCC, while the template is for FCA."
+    ],
+    "integrations": [
+      "Customer CRM",
+      "KYC Case Management",
+      "Document Management System"
+    ],
+    "notes_for_delivery": [
+      "Ensure the solution is adapted to the US region and OCC regulator."
+    ]
+  },
+  "model": "qwen3:8b"
+}

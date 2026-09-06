@@ -1,0 +1,96 @@
+{
+  "brief_id": "BRIEF-002",
+  "template_ids_used": [
+    "UK-003",
+    "UK-001",
+    "IN-001"
+  ],
+  "match_explanations": [
+    {
+      "template_id": "UK-003",
+      "why_it_matches": "The template directly matches the business problem of improving claims triage by classifying and routing claims. The capabilities of claims classification, severity assessment, and routing align with the Brief's requirements. The integrations also match the systems listed in the Brief. This is a direct match.",
+      "proposed_changes": [
+        "Region: The Brief is in the US, while the template is from the UK.",
+        "Regulator: The Brief specifies OCC, while the template is for FCA."
+      ]
+    },
+    {
+      "template_id": "UK-001",
+      "why_it_matches": "The template shares some capabilities with the Brief, such as document classification and routing, but it is focused on KYC document review rather than claims triage. This is a partial match.",
+      "proposed_changes": [
+        "Problem solved: The template is for KYC review, while the Brief is about claims triage.",
+        "Capabilities: The template includes KYC-specific capabilities not relevant to the Brief."
+      ]
+    },
+    {
+      "template_id": "IN-001",
+      "why_it_matches": "The template shares some capabilities with the Brief, such as document classification, but it is focused on KYC document review during onboarding, not claims triage. This is a partial match.",
+      "proposed_changes": [
+        "Problem solved: The template is for KYC review, while the Brief is about claims triage.",
+        "Capabilities: The template includes KYC-specific capabilities not relevant to the Brief."
+      ]
+    }
+  ],
+  "poc_plan": {
+    "title": "Claims Triage Automation POC",
+    "objective": "Improve the triage of incoming claims by automatically classifying cases, identifying severity indicators, and routing complex claims to specialist teams.",
+    "in_scope": [
+      "Automate claims classification",
+      "Identify severity indicators",
+      "Route complex claims to specialist teams",
+      "Integrate with Claims Management System",
+      "Integrate with Policy Administration System",
+      "Integrate with Customer CRM"
+    ],
+    "out_of_scope": [],
+    "approach": [
+      "Reuse the capabilities of claims classification, severity assessment, and routing from the UK-003 template.",
+      "Adapt the template to the US region and OCC regulator.",
+      "Ensure the solution keeps final claims decisions with human staff."
+    ],
+    "systems": [
+      "Claims Management System",
+      "Policy Administration System",
+      "Customer CRM"
+    ],
+    "success_criteria": [
+      "Improve initial claims classification",
+      "Prioritize complex or high-risk claims",
+      "Reduce manual routing effort",
+      "Keep final claims decisions with human staff"
+    ],
+    "timeline": "6 weeks",
+    "template_ids_used": [
+      "UK-003",
+      "UK-001",
+      "IN-001"
+    ],
+    "proposed_changes": [
+      "Region: The Brief is in the US, while the template is from the UK.",
+      "Regulator: The Brief specifies OCC, while the template is for FCA."
+    ]
+  },
+  "delivery_handoff": {
+    "title": "Claims Triage Automation Handoff",
+    "summary": "The POC will focus on automating claims triage by classifying cases, identifying severity indicators, and routing complex claims to specialist teams. The solution will integrate with the Claims Management System, Policy Administration System, and Customer CRM.",
+    "recommended_template_id": "UK-003",
+    "what_to_reuse": [
+      "Claims classification",
+      "Severity assessment",
+      "Claims routing"
+    ],
+    "adaptations_required": [
+      "Region: The Brief is in the US, while the template is from the UK.",
+      "Regulator: The Brief specifies OCC, while the template is for FCA."
+    ],
+    "integrations": [
+      "Claims Management System",
+      "Policy Administration System",
+      "Customer CRM"
+    ],
+    "notes_for_delivery": [
+      "Ensure the solution keeps final claims decisions with human staff."
+    ]
+  },
+  "model": "qwen3:8b"
+}

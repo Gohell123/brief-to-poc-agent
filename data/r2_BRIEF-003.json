@@ -1,0 +1,98 @@
+{
+  "brief_id": "BRIEF-003",
+  "template_ids_used": [
+    "UK-002",
+    "IN-004",
+    "IN-001"
+  ],
+  "match_explanations": [
+    {
+      "template_id": "UK-002",
+      "why_it_matches": "The template directly matches the business problem of accelerating underwriting preparation by extracting borrower information and generating a structured summary. The capabilities and integrations align closely with the Brief's requirements. The match is direct.",
+      "proposed_changes": [
+        "Region: The template is for the UK, but the Brief is for the US.",
+        "Regulator: The template is for the FCA, but the Brief is for the OCC."
+      ]
+    },
+    {
+      "template_id": "IN-004",
+      "why_it_matches": "The template partially matches the business problem of consolidating borrower financial information and highlighting underwriting considerations. The capabilities and integrations are similar to the Brief's requirements. The match is partial.",
+      "proposed_changes": [
+        "Region: The template is for India, but the Brief is for the US.",
+        "Regulator: The template is for the RBI, but the Brief is for the OCC."
+      ]
+    },
+    {
+      "template_id": "IN-001",
+      "why_it_matches": "The template does not directly match the business problem, as it focuses on KYC document review rather than underwriting preparation. The capabilities and integrations are not aligned with the Brief's requirements. The match is partial.",
+      "proposed_changes": [
+        "Region: The template is for India, but the Brief is for the US.",
+        "Regulator: The template is for the RBI, but the Brief is for the OCC.",
+        "Problem: The template focuses on KYC review, but the Brief is about underwriting preparation."
+      ]
+    }
+  ],
+  "poc_plan": {
+    "title": "Underwriting Preparation Automation",
+    "objective": "The lender wants to accelerate underwriting preparation by extracting borrower information from financial documents and producing a structured summary for human underwriters.",
+    "in_scope": [
+      "Extract borrower information from financial documents",
+      "Generate a structured underwriting summary",
+      "Surface relevant borrower risk factors",
+      "Integrate with Loan Origination System, Credit Bureau, and Financial Document Repository"
+    ],
+    "out_of_scope": [],
+    "approach": [
+      "Reuse the capabilities and integrations from the UK-002 template to extract borrower information and generate a structured summary.",
+      "Adapt the approach to align with the US regulatory environment and the OCC requirements.",
+      "Leverage the SME Loan Underwriting Copilot (IN-004) for risk factor identification and underwriting considerations."
+    ],
+    "systems": [
+      "Loan Origination System",
+      "Credit Bureau",
+      "Financial Document Repository"
+    ],
+    "success_criteria": [
+      "Reduce time spent preparing underwriting cases",
+      "Surface relevant borrower risk factors",
+      "Generate a consistent underwriting summary",
+      "Keep the final lending decision with a human underwriter"
+    ],
+    "timeline": "5 weeks",
+    "template_ids_used": [
+      "UK-002",
+      "IN-004",
+      "IN-001"
+    ],
+    "proposed_changes": [
+      "Region: The template is for the UK, but the Brief is for the US.",
+      "Regulator: The template is for the FCA, but the Brief is for the OCC.",
+      "Effort: The template effort is 6 weeks, but the Brief expects 5 weeks."
+    ]
+  },
+  "delivery_handoff": {
+    "title": "Underwriting Preparation Automation",
+    "summary": "The POC will focus on accelerating underwriting preparation by extracting borrower information from financial documents and producing a structured summary for human underwriters. The solution will integrate with the Loan Origination System, Credit Bureau, and Financial Document Repository.",
+    "recommended_template_id": "UK-002",
+    "what_to_reuse": [
+      "Application data extraction",
+      "Financial document analysis",
+      "Risk factor identification",
+      "Underwriting summary generation"
+    ],
+    "adaptations_required": [
+      "Region: The template is for the UK, but the Brief is for the US.",
+      "Regulator: The template is for the FCA, but the Brief is for the OCC."
+    ],
+    "integrations": [
+      "Loan Origination System",
+      "Credit Bureau",
+      "Financial Document Repository"
+    ],
+    "notes_for_delivery": [
+      "Ensure the solution is adapted to the US regulatory environment and the OCC requirements.",
+      "Focus on underwriting preparation rather than KYC review."
+    ]
+  },
+  "model": "qwen3:8b"
+}
