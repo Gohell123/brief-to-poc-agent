@@ -1,0 +1,186 @@
+[
+  {
+    "template_id": "UK-001",
+    "name": "KYC Document Review Assistant",
+    "region_of_origin": "UK",
+    "segment": "retail_bank",
+    "regulator_context": ["FCA"],
+    "problem_solved": "Automate first-level review of customer KYC documents and identify missing or inconsistent information.",
+    "capabilities": [
+      "Document classification",
+      "Identity information extraction",
+      "Missing document detection",
+      "KYC exception flagging"
+    ],
+    "integrations": [
+      "Document Management System",
+      "Customer Master",
+      "KYC Case Management"
+    ],
+    "effort_weeks": 4,
+    "outcome": "Reduced manual KYC review effort and improved identification of incomplete onboarding cases.",
+    "date_last_used": "2026-07-18",
+    "owner": "UK Solutions Engineering"
+  },
+  {
+    "template_id": "UK-002",
+    "name": "Loan Underwriting Decision Assistant",
+    "region_of_origin": "UK",
+    "segment": "lender",
+    "regulator_context": ["FCA"],
+    "problem_solved": "Assist underwriters by extracting borrower information and producing a structured underwriting summary.",
+    "capabilities": [
+      "Application data extraction",
+      "Financial document analysis",
+      "Risk factor identification",
+      "Underwriting summary generation"
+    ],
+    "integrations": [
+      "Loan Origination System",
+      "Credit Bureau",
+      "Document Repository"
+    ],
+    "effort_weeks": 6,
+    "outcome": "Faster preparation of underwriting cases with consistent summaries for human review.",
+    "date_last_used": "2026-06-22",
+    "owner": "UK Solutions Engineering"
+  },
+  {
+    "template_id": "UK-003",
+    "name": "Insurance Claims Triage Copilot",
+    "region_of_origin": "UK",
+    "segment": "insurer",
+    "regulator_context": ["FCA"],
+    "problem_solved": "Prioritize incoming insurance claims and route complex cases to the appropriate claims team.",
+    "capabilities": [
+      "Claims classification",
+      "Severity assessment",
+      "Policy information extraction",
+      "Claims routing"
+    ],
+    "integrations": [
+      "Claims Management System",
+      "Policy Administration System",
+      "Customer CRM"
+    ],
+    "effort_weeks": 5,
+    "outcome": "Improved claims triage speed and reduced manual routing effort.",
+    "date_last_used": "2026-05-30",
+    "owner": "UK Solutions Engineering"
+  },
+  {
+    "template_id": "UK-004",
+    "name": "Regulatory Reporting Preparation Assistant",
+    "region_of_origin": "UK",
+    "segment": "capital_markets",
+    "regulator_context": ["FCA"],
+    "problem_solved": "Assist operations teams in preparing regulatory reporting submissions by consolidating information from multiple systems.",
+    "capabilities": [
+      "Data extraction",
+      "Reporting field mapping",
+      "Validation checks",
+      "Exception identification"
+    ],
+    "integrations": [
+      "Data Warehouse",
+      "Trade Management System",
+      "Regulatory Reporting Platform"
+    ],
+    "effort_weeks": 8,
+    "outcome": "Reduced manual preparation effort and improved consistency of regulatory reporting workflows.",
+    "date_last_used": "2026-04-14",
+    "owner": "UK Solutions Engineering"
+  },
+  {
+    "template_id": "IN-001",
+    "name": "KYC Document Review Workflow",
+    "region_of_origin": "India",
+    "segment": "retail_bank",
+    "regulator_context": ["RBI"],
+    "problem_solved": "Support operations teams in reviewing identity and address documents during customer onboarding.",
+    "capabilities": [
+      "OCR and extraction",
+      "Document classification",
+      "Field validation",
+      "KYC discrepancy detection"
+    ],
+    "integrations": [
+      "Core Banking System",
+      "KYC Repository",
+      "Document Management System"
+    ],
+    "effort_weeks": 4,
+    "outcome": "Reduced manual document review time and improved consistency of KYC checks.",
+    "date_last_used": "2026-08-02",
+    "owner": "India Solutions Engineering"
+  },
+  {
+    "template_id": "IN-002",
+    "name": "Fraud Alert Triage Assistant",
+    "region_of_origin": "India",
+    "segment": "retail_bank",
+    "regulator_context": ["RBI"],
+    "problem_solved": "Help fraud operations teams review transaction alerts and prioritize cases requiring investigation.",
+    "capabilities": [
+      "Alert classification",
+      "Transaction context summarization",
+      "Risk signal identification",
+      "Investigation prioritization"
+    ],
+    "integrations": [
+      "Fraud Detection Platform",
+      "Transaction Database",
+      "Case Management System"
+    ],
+    "effort_weeks": 5,
+    "outcome": "Improved fraud alert prioritization and reduced time spent reviewing low-risk alerts.",
+    "date_last_used": "2026-07-11",
+    "owner": "India Solutions Engineering"
+  },
+  {
+    "template_id": "IN-003",
+    "name": "Bank Customer Service Copilot",
+    "region_of_origin": "India",
+    "segment": "retail_bank",
+    "regulator_context": ["RBI"],
+    "problem_solved": "Assist customer service agents in answering banking queries using approved internal knowledge.",
+    "capabilities": [
+      "Knowledge retrieval",
+      "Response drafting",
+      "Customer intent classification",
+      "Agent assistance"
+    ],
+    "integrations": [
+      "CRM",
+      "Knowledge Base",
+      "Core Banking System"
+    ],
+    "effort_weeks": 6,
+    "outcome": "Reduced average handling time and improved consistency of customer service responses.",
+    "date_last_used": "2026-06-05",
+    "owner": "India Solutions Engineering"
+  },
+  {
+    "template_id": "IN-004",
+    "name": "SME Loan Underwriting Copilot",
+    "region_of_origin": "India",
+    "segment": "lender",
+    "regulator_context": ["RBI"],
+    "problem_solved": "Support SME lending teams by consolidating borrower financial information and highlighting underwriting considerations.",
+    "capabilities": [
+      "Financial document extraction",
+      "Borrower profile summarization",
+      "Risk factor identification",
+      "Underwriter question generation"
+    ],
+    "integrations": [
+      "Loan Origination System",
+      "Credit Bureau",
+      "Financial Document Repository"
+    ],
+    "effort_weeks": 7,
+    "outcome": "Reduced manual preparation time for SME lending cases and improved consistency of underwriting inputs.",
+    "date_last_used": "2026-05-19",
+    "owner": "India Solutions Engineering"
+  }
+]

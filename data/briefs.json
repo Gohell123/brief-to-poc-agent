@@ -1,0 +1,61 @@
+[
+  {
+    "brief_id": "BRIEF-001",
+    "account": "NorthStar Community Bank",
+    "region": "US",
+    "segment": "retail_bank",
+    "regulator": "OCC",
+    "business_problem": "The bank wants to reduce the manual effort involved in reviewing customer onboarding documents and identifying incomplete KYC cases.",
+    "systems": [
+      "Customer CRM",
+      "KYC Case Management",
+      "Document Management System"
+    ],
+    "expected_timeline": "4 weeks",
+    "success_criteria": [
+      "Reduce manual first-level KYC review effort",
+      "Identify missing or inconsistent customer information",
+      "Provide explainable recommendations for human reviewers"
+    ]
+  },
+  {
+    "brief_id": "BRIEF-002",
+    "account": "HarborPoint Insurance",
+    "region": "US",
+    "segment": "insurer",
+    "regulator": "OCC",
+    "business_problem": "The insurer wants to improve the triage of incoming claims by automatically classifying cases, identifying severity indicators, and routing complex claims to specialist teams.",
+    "systems": [
+      "Claims Management System",
+      "Policy Administration System",
+      "Customer CRM"
+    ],
+    "expected_timeline": "6 weeks",
+    "success_criteria": [
+      "Improve initial claims classification",
+      "Prioritize complex or high-risk claims",
+      "Reduce manual routing effort",
+      "Keep final claims decisions with human staff"
+    ]
+  },
+  {
+    "brief_id": "BRIEF-003",
+    "account": "Summit Lending Group",
+    "region": "US",
+    "segment": "lender",
+    "regulator": "OCC",
+    "business_problem": "The lender wants to accelerate underwriting preparation by extracting borrower information from financial documents and producing a structured summary for human underwriters.",
+    "systems": [
+      "Loan Origination System",
+      "Credit Bureau",
+      "Financial Document Repository"
+    ],
+    "expected_timeline": "5 weeks",
+    "success_criteria": [
+      "Reduce time spent preparing underwriting cases",
+      "Surface relevant borrower risk factors",
+      "Generate a consistent underwriting summary",
+      "Keep the final lending decision with a human underwriter"
+    ]
+  }
+]
