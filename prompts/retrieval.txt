@@ -1,0 +1,10 @@
+"Implement template retrieval.
+
+- Read template embeddings from data/template_embeddings.json
+- Embed a Brief using BAAI/bge-small-en-v1.5
+- Calculate cosine similarity against all template embeddings
+- Return top 3 template_ids with scores
+- Use data/templates.json to return the full template metadata
+- Create retrieve_templates.py
+- Add a simple test using BRIEF-001
+- No vector DB or UI yet."

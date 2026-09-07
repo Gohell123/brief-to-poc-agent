@@ -1,463 +1,150 @@
-# Build Log — Brief-to-POC Agent
+Build Log — Brief-to-POC Agent
 
-## Overall Architecture
+Architecture
 
-The system implements the required Brief-to-POC-Plan loop:
-
-Won Opportunity Event
-        ↓
-      Brief
-        ↓
- Template Retrieval
-        ↓
- AI Agent
-        ↓
-POC Plan + Delivery Handoff
-        ↓
- US Solution Architect
-   Accept / Edit / Reject
-        ↓
-    OS Event
-        ↓
-Feedback → Template Ranking
-
-In parallel:
+Won Opportunity Event → Brief → Template Retrieval → AI Agent
+                                      ↓
+                         POC Plan + Delivery Handoff
+                                      ↓
+                         US Solution Architect
+                           Accept / Edit / Reject
+                                      ↓
+                                  OS Event
+                                      ↓
+                         Feedback → Template Ranking
 
 OS Event → SLA Calculation → Green / Amber / Red
-                              ↓
-                         SLA Breach
-                              ↓
-                     Automatic Trigger
+                                      ↓
+                               SLA Breach → Trigger
 
-The Streamlit control surface brings the queue, Brief, seam health,
-generated draft, recommended templates, trigger information and human
-actions into one screen.
+The Streamlit control surface exposes the queue, Brief, seam health, draft,
+templates and human actions. Retrieval, generation, human decisions,
+feedback, SLA and trigger logic remain separate modules.
 
-The architecture deliberately separates:
-- retrieval
-- generation
-- human decision
-- feedback
-- SLA calculation
-- trigger handling
-- UI
+1. R1 — Event In
 
-This keeps the POC simple while allowing individual components to be
-replaced by production services later.
+Decision: Synthetic CRM-style opportunity.won OS events with 3 varied
+Briefs containing timestamp, owner, account, region, segment, regulator,
+business problem, systems, timeline and success criteria.
 
----
+Why: Demonstrates the required event boundary without spending the
+8-hour POC on real CRM integration.
 
-## 1. R1 — Event In
+Assumption: Production would receive the event from CRM when an
+opportunity moves to Won.
 
-**Requirement:** A won opportunity arrives as an OS event carrying the
-Brief, including timestamp, owner and account.
+2. Embedding & Retrieval
 
-**Decision:** Use a synthetic CRM-style `opportunity.won` OS event.
+Decision: Local BAAI/bge-small-en-v1.5; cosine similarity; top 3 of
+8 synthetic templates.
 
-**Why:** The challenge allows synthetic data and does not require a real
-CRM integration. The event shape demonstrates how a production webhook
-would enter the system without spending the limited build time on
-integration setup.
+Why: Sufficient for the POC scale and avoids unnecessary vector-DB
+infrastructure.
 
-**Synthetic data:**
-- 3 Briefs
-- Timestamp
-- Owner
-- Account
-- Region
-- Segment
-- Regulator
-- Business problem
-- Systems
-- Expected timeline
-- POC success criteria
+AI Tool / Prompt: Cursor Agent / prompts/embed_templates.txt,
+prompts/retrieval.txt.
 
-**Assumption:** In production, the event would originate from the CRM
-when an opportunity moves to Won. For the POC, the event is represented
-locally.
+Validation: All 3 Briefs tested; the correct domain template ranked #1.
 
----
+Discarded: Cohere Embed v4 via Bedrock (AWS model access blocked) and
+production vector DB (unnecessary at 8 templates).
 
-## 2. Template Embedding
+3. R2 — Agent Generation
 
-**Requirement:** Generate embeddings for the 8 solution templates.
+Decision: Ollama + Qwen3 8B. Generation instructions are maintained in
+prompts/r2_generation.txt.
 
-**Decision:** Use local `BAAI/bge-small-en-v1.5`.
+Why: Local, reproducible and no API-key dependency.
 
-**Why:** Cohere Embed v4 through Bedrock was blocked by the AWS account.
-Local embedding avoids the dependency and fits the 8-hour POC.
+Model iteration: Qwen3 1.7B showed grounding/instruction-following
+errors, so Qwen3 8B was selected after materially better results.
 
-**AI Tool:** Cursor Agent
+Validation: generate_r2.py produced structured match explanations,
+POC plan, Delivery handoff, template IDs and proposed changes.
 
-**Prompt:**
+AI development: Cursor Agent was used for implementation and prompt
+iteration.
 
-"Implement the template embedding step.
+Known limitation: Local Qwen3 8B can be slow. The Streamlit demo uses a
+deterministic synthetic R2 draft so R3 can be tested interactively without
+waiting for LLM generation; the real R2 path remains implemented.
 
-- Read data/template_documents.json
-- Use BAAI/bge-small-en-v1.5 with sentence-transformers
-- Generate embeddings for all 8 templates
-- Save them to data/template_embeddings.json
-- Each record should contain template_id and embedding
-- Create embed_templates.py
-- Keep it simple; don't build retrieval, vector DB, agent, or UI yet.
-- First show me your plan, then implement."
+4. R3 — Human Decision & Learning
 
-**Result:** Cursor created `embed_templates.py` and generated embeddings
-for all 8 templates.
+Decision: The US Solution Architect owns Accept / Edit / Reject.
+Each decision creates a timestamped OS event. Accepted/edited decisions
+add positive feedback; rejected decisions add negative feedback.
 
-**Validation:** 8 embeddings, 384 dimensions.
+Implementation: decision.py, events.py, feedback.py and
+retrieve_templates.py.
 
-**Discarded approach:** Cohere Embed v4 via Amazon Bedrock because model
-invocation was blocked for the AWS account.
+Learning: final_score = semantic_similarity + feedback_score, with
+accepted = +0.02 and rejected = -0.02.
 
----
+Validation: Accept, Edit and Reject tested; OS events and persisted
+feedback verified; feedback changes subsequent ranking.
 
-## 3. Template Retrieval
+5. R4 — Seam Health & Trigger
 
-**Requirement:** Retrieve relevant solution templates from the template
-library for an incoming Brief.
+Decision: 2-business-day SLA calculated from the OS event timestamp.
+Green <70%, Amber 70–100%, Red >100%.
 
-**Decision:** Use BGE embeddings with cosine similarity. Retrieve the top
-3 templates from the 8-template synthetic library.
+On breach: create seam.sla_breached, assign the US Solution Architect,
+attach SLA context and draft, and persist the trigger locally.
 
-**Why:** The POC has only 8 templates, so direct in-memory similarity
-search is sufficient. A vector database would add infrastructure without
-providing meaningful value at this scale.
+Assumptions: 70% amber threshold was selected because the requirement
+does not specify one. “Continuously” is implemented by recalculation on
+system check/refresh rather than a background scheduler.
 
-**AI Tool:** Cursor Agent
+Validation: Green, Amber, Red, business-day calculation and breach
+trigger tested.
 
-**Prompt:**
+6. R5 — Control Surface
 
-"Implement template retrieval.
+Decision: Streamlit for the one-screen control surface.
 
-- Read template embeddings from data/template_embeddings.json
-- Embed a Brief using BAAI/bge-small-en-v1.5
-- Calculate cosine similarity against all template embeddings
-- Return top 3 template_ids with scores
-- Use data/templates.json to return the full template metadata
-- Create retrieve_templates.py
-- Add a simple test using BRIEF-001
-- No vector DB or UI yet."
+Includes: open handoffs, Brief, seam health/SLA, generated plan,
+recommended templates, Delivery handoff and Accept/Reject actions.
 
-**Validation:**
+The UI calls the existing R2/R3/R4 modules rather than duplicating logic.
 
-Tested all 3 synthetic Briefs:
+7. R6 — AI-Assisted Development
 
-- BRIEF-001 → UK-001 KYC
-- BRIEF-002 → UK-003 Claims
-- BRIEF-003 → UK-002 Underwriting
+AI was used for decomposition, implementation, debugging, prompt
+iteration, model evaluation and architecture decisions. Prompts used during
+the build are retained under prompts/.
 
-The correct domain template ranked #1 for each Brief.
+Key Architectural Decisions
 
-**Result:** Retrieval successfully identifies relevant templates across
-different financial-services use cases.
+Event-driven state: OS events are the source of truth for important
+handoff actions.
 
-**Discarded approach:** Vector database at this stage. Direct cosine
-similarity is simpler and faster for an 8-template POC.
+Retrieval before generation: templates are retrieved first and supplied
+to the LLM as grounding context.
 
----
+Human-in-the-loop: AI performs volume work; the US Solution Architect
+makes the final decision.
 
-## 4. R2 — Agent Generation
+Deterministic business logic: SLA, events, feedback and ranking
+adjustments are handled in Python, not by the LLM.
 
-**Requirement:** From a Brief and retrieved templates, generate match
-explanations, an editable POC plan and an editable Delivery handoff.
+Lightweight learning: human feedback adjusts ranking rather than
+training a separate model.
 
-**Decision:** Use local Ollama with Qwen3 8B.
+Deliberate Cuts
 
-**Why:** Local execution avoids API keys and external dependencies and
-keeps the demo reproducible.
+Real CRM/notification integrations, production vector DB, background SLA
+scheduler, production auth/RBAC/database, fine-tuning, full evaluation
+harness, multi-agent orchestration and deployment infrastructure were cut
+to honor the one-day constraint. See CUT_LIST.md.
 
-The generation instructions are kept separately in
-`prompts/r2_generation.txt` so prompt iteration does not require code
-changes.
+Synthetic Data
 
-**AI Tool:** Cursor Agent
+8 reusable templates across UK/India and 3 synthetic US Briefs are used.
+No proprietary customer data is used.
 
-**Prompt:**
+Validation Summary
 
-"Implement R2 generation.
-
-- Take a Brief and the top 3 retrieved templates
-- Use a suitable LLM to explain matches, draft a POC plan, and draft a
-  Delivery handoff
-- Base output only on the Brief and retrieved templates
-- Include template IDs used and proposed changes
-- Return structured JSON
-- Keep prompt/instructions in a separate file
-- Choose the LLM for speed and simplicity, and document the choice
-- Test with BRIEF-001
-- No UI yet"
-
-### Model iteration
-
-**Initial model:** Qwen3 1.7B.
-
-**Failure:** Testing showed recurring instruction-following and grounding
-errors, including mixing Brief systems with template integrations and
-making unsupported claims.
-
-**Change:** Switched to Qwen3 8B.
-
-**Result:** Qwen3 8B produced materially better template reasoning,
-source separation and structured output using the same retrieval inputs
-and generation prompt.
-
-**Final decision:** Qwen3 8B for the POC.
-
-**Validation:** `generate_r2.py` successfully produces structured R2
-output including:
-- match explanations
-- POC plan
-- Delivery handoff
-- template IDs used
-- proposed changes
-
-**Discarded approaches:**
-- Qwen3 1.7B due to grounding/instruction-following quality.
-- Cloud LLM integration because local Ollama was already available and
-  the POC was time constrained.
-
----
-
-## 5. R3 — Human Decision and Feedback Learning
-
-**Requirement:** The US Solution Architect accepts, edits or rejects the
-draft. The decision becomes an OS event and feeds back into reuse and
-template ranking.
-
-**Decision:**
-
-- Human decision-maker = US Solution Architect.
-- Supported actions = Accept / Edit / Reject.
-- Each decision creates an OS event.
-- Accepted and edited decisions provide positive feedback.
-- Rejected decisions provide negative feedback.
-- Template ranking incorporates this feedback.
-
-**Implementation:**
-
-- `decision.py` records the human decision.
-- `events.py` creates timestamped OS events.
-- `feedback.py` persists feedback.
-- `data/template_feedback.json` stores acceptance/rejection counts.
-- `retrieve_templates.py` incorporates feedback into ranking.
-
-**Feedback scoring:**
-
-- Accepted = +0.02
-- Rejected = -0.02
-- Final ranking score = semantic similarity + feedback score
-
-**Why:** The requirement specifies that ranking should learn from
-acceptance/rejection but does not prescribe a learning algorithm.
-A lightweight feedback-based ranking mechanism was chosen instead of
-training a separate ML model.
-
-**Validation:**
-
-- Accept tested.
-- Edit tested.
-- Reject tested.
-- OS events verified with timestamp, owner, Brief ID and decision.
-- Feedback persistence verified.
-- Feedback score verified to influence subsequent ranking.
-
----
-
-## 6. R4 — Seam Health and Automatic Trigger
-
-**Requirement:** Continuously calculate Brief age against the two-business-
-day SLA, show green/amber/red health and trigger escalation on breach.
-
-**Decision:**
-
-- SLA = 2 business days.
-- Health calculated automatically from the OS event timestamp.
-- Green = below 70% of SLA.
-- Amber = 70–100% of SLA.
-- Red = SLA breached.
-
-**Trigger:**
-
-On breach:
-- create `seam.sla_breached` OS event
-- assign it to the US Solution Architect
-- attach SLA context
-- attach the current draft
-- persist the trigger in the trigger log
-
-For the POC, the trigger is represented locally rather than integrated
-with Slack/email.
-
-**Assumptions:**
-
-- The requirement defines green/amber/red but does not define the amber
-  threshold, so 70% was selected.
-- "Continuously" is implemented by recalculating health whenever the
-  system checks/refreshes the seam rather than introducing a background
-  scheduler.
-
-**Validation:**
-
-- Green state tested.
-- Amber state tested.
-- Red state tested.
-- Business-day calculation tested.
-- Breach trigger tested.
-- Draft attachment verified.
-
----
-
-## 7. R5 — One Control Surface
-
-**Requirement:** One screen must contain the queue, seam health,
-current draft, trigger log and actions.
-
-**Decision:** Use Streamlit.
-
-**Why:** Streamlit provides the fastest path to an interactive control
-surface within the one-day constraint.
-
-**Control surface includes:**
-
-- Open Handoffs queue
-- Open action
-- Current Brief
-- Seam Health
-- SLA information
-- AI-generated POC plan
-- Recommended templates
-- Delivery handoff
-- Human decision actions
-
-The Open action changes the currently selected Brief, allowing the
-Solution Architect to work on a specific handoff rather than viewing
-static information.
-
-**Architecture decision:** The UI calls the existing R2/R3/R4 modules
-rather than duplicating retrieval, decision or SLA logic.
-
----
-
-## 8. R6 — AI-Assisted Development
-
-AI was used throughout the build for:
-- decomposition
-- implementation
-- code generation
-- debugging
-- prompt iteration
-- model evaluation
-- architectural trade-off discussion
-
-The main AI iteration was the R2 generation prompt and model selection.
-
-The build process deliberately used small implementation steps so each
-requirement could be independently tested before moving to the next.
-
----
-
-## 9. Key Architectural Decisions
-
-### Event-driven state
-
-OS events are the source of truth for important handoff actions.
-Examples:
-- opportunity won
-- POC plan accepted
-- POC plan edited
-- POC plan rejected
-- SLA breached
-
-This follows the RevenueOS requirement that handoffs are represented as
-timestamped, owned events.
-
-### Retrieval before generation
-
-The LLM does not search an unstructured knowledge base itself. The
-application first retrieves candidate templates and passes those
-grounded records to the generation step.
-
-This makes template recommendations explainable and allows retrieval to
-be evaluated independently.
-
-### Human-in-the-loop
-
-The AI owns volume work:
-- retrieval
-- matching
-- drafting
-
-The US Solution Architect owns the final decision.
-
-This deliberately keeps business judgement outside the agent.
-
-### Deterministic business logic outside the LLM
-
-SLA calculation, event creation, feedback persistence and ranking
-adjustment are implemented in Python rather than delegated to the LLM.
-
-This makes these behaviors deterministic and testable.
-
-### Local-first architecture
-
-BGE embeddings and Qwen3 8B run locally.
-
-This was selected for:
-- reproducibility
-- no API key dependency
-- fast setup
-- suitability for an 8-hour POC
-
-### Lightweight learning
-
-Feedback is implemented as a ranking adjustment rather than model
-training.
-
-This demonstrates the required learning loop without introducing an
-additional ML training pipeline.
-
----
-
-## 10. Deliberate Cuts
-
-The following were intentionally not implemented because of the
-one-day constraint:
-
-- Production CRM integration
-- Real Slack/email trigger integration
-- Production vector database
-- Background SLA scheduler
-- Authentication/RBAC
-- Persistent production database
-- Model fine-tuning
-- Full evaluation harness
-- Multi-agent architecture
-- Production deployment infrastructure
-
-These can be introduced independently without changing the core
-Brief → Retrieve → Draft → Human Decision → Feedback → SLA loop.
-
----
-
-## 11. Known Limitation
-
-Local Qwen3 8B generation can be slow.
-
-The core retrieval, human-decision, feedback, SLA and trigger paths were
-validated independently. The POC prioritizes demonstrating the complete
-architecture and control loop within the eight-hour constraint rather
-than optimizing local LLM latency.
-
----
-
-## 12. Synthetic Data
-
-All Briefs, solution templates and OS events used for the POC are
-synthetic.
-
-The template library contains 8 templates across UK and India and covers
-financial-services use cases including KYC, underwriting, claims,
-customer service and fraud.
-
-No proprietary customer or company data was used.
+R1 event flow, retrieval, R2 generation, R3 decisions/feedback, R4 SLA and
+trigger behavior, and R5 interactive control-surface actions were tested
+within the POC time box.

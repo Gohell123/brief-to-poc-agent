@@ -1,0 +1,10 @@
+"Implement the template embedding step.
+
+- Read data/template_documents.json
+- Use BAAI/bge-small-en-v1.5 with sentence-transformers
+- Generate embeddings for all 8 templates
+- Save them to data/template_embeddings.json
+- Each record should contain template_id and embedding
+- Create embed_templates.py
+- Keep it simple; don't build retrieval, vector DB, agent, or UI yet.
+- First show me your plan, then implement."
